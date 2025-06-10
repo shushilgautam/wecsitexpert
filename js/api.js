@@ -1,8 +1,8 @@
 
 
 // Base URLs
-// const hostApi = "https://dev.learninghammer.com/mobileapp";
-const hostApi = "http://127.0.0.1:8000";
+const hostApi = "https://dev.learninghammer.com/mobileapp";
+// const hostApi = "http://127.0.0.1:8000";
 
 // API Endpoints
 const endpoints = {
