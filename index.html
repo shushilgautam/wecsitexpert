@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WeCSIT Quantum Admin</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap">
+  <style>
+    :root {
+      --neon-cyan: #0ff;
+      --deep-space: #0a0c17;
+      --starlight: rgba(255,255,255,0.1);
+      --galaxy-purple: #6c43f5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--deep-space) 0%, #1a1c2f 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cyber-border {
+      position: relative;
+      background: linear-gradient(45deg, var(--neon-cyan), var(--galaxy-purple));
+      padding: 2px;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+      animation: border-pulse 3s infinite;
+    }
+
+    .login-container {
+      background: rgba(10, 12, 23, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 3rem 4rem;
+      border-radius: 14px;
+      width: 500px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: var(--neon-cyan);
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 1.2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--starlight);
+      border-radius: 8px;
+      color: white;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    label {
+      position: absolute;
+      left: 1rem;
+      top: 1rem;
+      color: rgba(255,255,255,0.6);
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus ~ label,
+    input:valid ~ label {
+      top: -0.8rem;
+      left: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--neon-cyan);
+    }
+
+    #login-btn {
+      width: 100%;
+      padding: 1.2rem;
+      background: linear-gradient(45deg, var(--neon-cyan), var(--galaxy-purple));
+      border: none;
+      border-radius: 8px;
+      color: var(--deep-space);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .holographic-effect {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,255,255,0.1) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+
+    @keyframes border-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .error-message {
+      color: #ff4d4d;
+      text-align: center;
+      margin-top: 1rem;
+      text-shadow: 0 0 10px rgba(255,77,77,0.3);
+    }
+
+    /* Add floating particles background */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles" class="particles"></div>
+  <div class="cyber-border">
+    <div class="login-container">
+      <div class="holographic-effect" style="top: -50px; right: -50px;"></div>
+      <div class="holographic-effect" style="bottom: -50px; left: -50px;"></div>
+      
+      <h1>QUANTUM ACCESS</h1>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <input type="email" id="email" required>
+          <label for="email">Admin ID</label>
+        </div>
+        
+        <div class="form-group">
+          <input type="password" id="password" required>
+          <label for="password">Encryption Key</label>
+        </div>
+        
+        <button id="login-btn" type="submit">AUTHENTICATE</button>
+      </form>
+      
+      <p class="error-message" id="error-message"></p>
+     
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  
+  
+  <!-- Add particles background -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS('particles', {
+      particles: {
+        number: { value: 80 },
+        color: { value: '#0ff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: 'none',
+          random: true,
+          straight: false,
+          out_mode: 'out',
+          bounce: false
+        }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: { enable: true, mode: 'repulse' },
+          onclick: { enable: true, mode: 'push' },
+          resize: true
+        }
+      }
+    });
+  </script>
+  <script type="module" src="./js/script.js"></script>
+  <script>
+     console.log("DOM fully loaded");
+    const form = document.getElementById("login-form");
+    const loginBtn = document.getElementById("login-btn");
+
+    if (!form || !loginBtn) {
+      console.error("Form or login button not found in the DOM.");
+      return;
+    }
+    
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // Basic validation
+      if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        toastManager.show("Please enter a valid email address.");
+        return;
+      }
+      if (!password) {
+        toastManager.show("Password cannot be empty.");
+        return;
+      }
+
+      loginBtn.disabled = true;
+
+      try {
+        const url = hostApi + endpoints.login;
+        const payload = { email, password };
+
+        const response = await axios.post(url, payload, {
+          headers: { "Content-Type": "application/json" },
+          validateStatus: (status) => status < 500, // reject only >=500
+        });
+
+        if (response.status === 200) {
+          const data = response.data;
+          // Save tokens/UI data
+          localStorage.setItem("refreshToken", data.data.refresh);
+          localStorage.setItem("userID", data.userId);
+          localStorage.setItem("roleID", data.roleId);
+          localStorage.setItem("name", data.name);
+          localStorage.setItem("photo", data.photo);
+          localStorage.setItem("email", data.email);
+
+          if (data.roleId.toLowerCase() === "expert") {
+            window.location.href = "/qna.html";
+          } else {
+            toastManager.show("Access Denied: Only Expert are allowed.");
+          }
+
+        } else if (response.status === 400) {
+          // Show the exact error message from the server
+          toastManager.show(response.data.error || "Invalid credentials.");
+        } else {
+          // Handle other statuses (e.g., 401, 403, etc.)
+          const serverMsg = response.data.error || response.data.detail;
+          toastManager.show(serverMsg || `Unexpected error (${response.status})`);
+        }
+
+      } catch (err) {
+        // Network error or unexpected exception
+        console.error("Login Error:", err);
+        if (err.request && !err.response) {
+          toastManager.show("Network error – please check your connection.");
+        } else {
+          toastManager.show(err.message || "An unexpected error occurred.");
+        }
+      } finally {
+        loginBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

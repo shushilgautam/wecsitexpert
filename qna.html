@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QnA Form with Copy-Paste Image Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    select,
+    textarea,
+    .image-drop-area {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .image-drop-area {
+      text-align: center;
+      cursor: pointer;
+      color: #666;
+      user-select: none;
+      min-height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fafafa;
+      transition: background-color 0.3s;
+    }
+
+    .image-drop-area.dragover {
+      background-color: #e2eefd;
+      border-color: #007bff;
+      color: #007bff;
+    }
+
+    .image-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .image-preview img {
+      max-width: 100%;
+      max-height: 250px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .image-preview button {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    .image-preview button:hover {
+      background-color: #a71d2a;
+    }
+
+    button[type="button"] {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    button[type="button"]:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      color: #dc3545;
+      font-size: 0.9em;
+      margin-top: 3px;
+    }
+
+    .logout-container {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    #logoutButton {
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+
+    #logoutButton:hover {
+      background-color: #a71d2a;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import { hostApi, endpoints } from "./js/api.js";
+    import { ToastManager } from './js/script.js';
+
+
+    // Instantiate a toast manager
+    const toastManager = new ToastManager();
+
+    function checkLoginStatus() {
+      const refreshToken = localStorage.getItem("refreshToken");
+      const roleID = localStorage.getItem("roleID");
+
+      if (!refreshToken || !roleID) {
+        // Clear local storage and redirect to login
+        localStorage.clear();
+        toastManager.show("Session expired. Redirecting to login...", "error");
+
+        // Redirect to index.html after a short delay
+        setTimeout(() => {
+          window.location.href = "/index.html";
+        }, 2000);
+      }
+    }
+
+
+    // Call the function on page load
+    checkLoginStatus();
+  </script>
+
+  <div class="container">
+    <div class="logout-container">
+      <button id="logoutButton">Logout</button>
+    </div>
+    <h1>QnA Form</h1>
+    <form id="qnaForm">
+      <!-- Question User -->
+      <div class="form-group">
+        <label for="questionUser">Question User</label>
+        <select id="questionUser">
+          <option value="">Select User</option>
+        </select>
+        <p id="questionUserError" class="error"></p>
+      </div>
+
+      <!-- Subject -->
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <select id="subject">
+          <option value="">Select Subject</option>
+        </select>
+        <p id="subjectError" class="error"></p>
+      </div>
+
+      <!-- Question -->
+      <div class="form-group">
+        <label for="question">Question</label>
+        <textarea id="question" rows="4" placeholder="Type your question here..."></textarea>
+        <p id="questionError" class="error"></p>
+      </div>
+
+      <!-- Question Image Upload with drag/drop/click and copy-paste -->
+      <div class="form-group">
+        <label for="questionImage">Upload Question Image</label>
+        <div class="image-drop-area" id="questionImageDropArea" tabindex="0" ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'questionImage')"
+          onclick="document.getElementById('questionImage').click()" onpaste="handlePaste(event, 'questionImage')">
+          <p>Click, drag & drop, or paste image here</p>
+          <input id="questionImage" type="file" accept="image/*" onchange="handleFileChange(event, 'questionImage')"
+            hidden />
+        </div>
+        <div id="questionImagePreview" class="image-preview"></div>
+        <p id="questionImageError" class="error"></p>
+      </div>
+
+      <!-- Answer User -->
+      <div class="form-group">
+        <label for="answerUser">Answer User</label>
+        <select id="answerUser">
+          <option value="">Select User</option>
+        </select>
+        <p id="answerUserError" class="error"></p>
+      </div>
+
+      <!-- Answer -->
+      <div class="form-group">
+        <label for="answer">Answer</label>
+        <textarea id="answer" rows="4" placeholder="Type your answer here..."></textarea>
+        <p id="answerError" class="error"></p>
+      </div>
+
+      <!-- Answer Image Upload with drag/drop/click and copy-paste -->
+      <div class="form-group">
+        <label for="answerImage">Upload Answer Image</label>
+        <div class="image-drop-area" id="answerImageDropArea" tabindex="0" ondragover="handleDragOver(event)"
+          ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'answerImage')"
+          onclick="document.getElementById('answerImage').click()" onpaste="handlePaste(event, 'answerImage')">
+          <p>Click, drag & drop, or paste image here</p>
+          <input id="answerImage" type="file" accept="image/*" onchange="handleFileChange(event, 'answerImage')"
+            hidden />
+        </div>
+        <div id="answerImagePreview" class="image-preview"></div>
+        <p id="answerImageError" class="error"></p>
+      </div>
+
+      <button type="button" id="qnaSubmitBtn">Submit</button>
+    </form>
+  </div>
+
+  <script type="module" src="js/qna.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="module">
+    import { ToastManager } from './js/script.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      // only proceed if the login form actually exists
+    
+    const toastManage = new ToastManager();
+    document.getElementById("logoutButton").addEventListener("click", () => {
+      localStorage.clear(); // Clear all stored data
+      toastManage.show("Logged out successfully. Redirecting to login...", "info");
+      setTimeout(() => {
+        window.location.href = "/index.html"; // Redirect to login
+      }, 2000);
+    });
+    });
+  </script>
+  <!-- <script>
+  const hostApi = "http://127.0.0.1:8000";
+  const apiEndpoint = `${hostApi}/community/qna/`;
+
+  // Function to populate select options
+  function populateSelect(selectId, items, valueField, textField) {
+    const select = document.getElementById(selectId);
+    items.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item[valueField];
+      option.textContent = item[textField];
+      select.appendChild(option);
+    });
+  }
+
+  // Fetch users and subjects
+  axios.get(apiEndpoint)
+    .then(response => {
+      const data = response.data;
+      // Assuming response contains { users: [...], subjects: [...] }
+      populateSelect('questionUser', data.users, 'id', 'username');
+      populateSelect('subject', data.subjects, 'id', 'subjectName');
+    })
+    .catch(error => {
+      console.error('Error fetching users and subjects:', error);
+    });
+</script> -->
+</body>
+
+</html>
