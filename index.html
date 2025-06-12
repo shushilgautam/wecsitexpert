@@ -209,7 +209,8 @@
     });
   </script>
   <script type="module" src="./js/script.js"></script>
-  <script>
+  <script type="module">
+    import { hostApi, endpoints } from "./js/api.js";
      console.log("DOM fully loaded");
     const form = document.getElementById("login-form");
     const loginBtn = document.getElementById("login-btn");
