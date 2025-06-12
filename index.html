@@ -210,8 +210,10 @@
   </script>
   <script type="module" src="./js/script.js"></script>
   <script type="module">
+     import { ToastManager } from './js/script.js';
     import { hostApi, endpoints } from "./js/api.js";
      console.log("DOM fully loaded");
+     const toastManage = new ToastManager();
     const form = document.getElementById("login-form");
     const loginBtn = document.getElementById("login-btn");
 
