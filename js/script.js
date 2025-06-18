@@ -158,8 +158,8 @@ function checkLoginStatus(toastManager) {
 
   if (refreshToken && roleID) {
     if (roleID.toLowerCase() === "expert") {
-      if (window.location.pathname !== "/qna.html") {
-        window.location.href = "/qna.html";
+      if (window.location.pathname !== "/wecsitexpert/qna.html") {
+        window.location.href = "/wecsitexpert/qna.html";
       }
     } else {
       toastManager.show("Access Denied: Only Experts are allowed.");
